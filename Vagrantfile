@@ -9,14 +9,14 @@ Vagrant::Config.run do |config|
 
   config.vm.box = "opscode-ubuntu-12.04box"
   config.vm.box_url = "http://files.vagrantup.com/precise64.box"
-  config.vm.forward_port 80, 8000
-  config.vm.forward_port 8080, 1234
+  config.vm.forward_port 80, 4567
+  config.vm.forward_port 8080, 5678
 
 
   config.vm.provision :chef_client do |chef|
    chef.chef_server_url = "https://192.168.4.140"
    chef.validation_client_name = "chef-validator"
    chef.validation_key_path = "./.chef/chef-validator.pem"
-   chef.node_name = "vagrantVM4"
+   chef.node_name = "DeployVM"
   end
 end
