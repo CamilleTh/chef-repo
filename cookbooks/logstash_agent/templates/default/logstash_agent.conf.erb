@@ -1,0 +1,21 @@
+input {
+	file {
+		type			=> "crl_access_logs"
+		path			=> [ "/home/app/apache-tomcat-6.0.36/logs/*access_log.*.txt" ]
+	}
+	file {
+		type			=> "crl_catalina_tech_logs"
+		path			=> [ "%= {node['tomcat7']['logDir']}/tomcat.log %>" ]
+	}
+}
+output {
+	stdout {
+		debug			=> true
+		debug_format		=> "json"
+	}
+	redis {
+		host			=> "176.65.73.155"
+		data_type		=> "list"
+		key			=> "intech_crl_logstash_key"
+	}
+}

@@ -64,7 +64,7 @@ when "debian", "ubuntu"
 		user "root"
 		group "root"
 		cwd "#{node['tomcat7']['installDir']}/apache-tomcat-#{node['tomcat7']['version']}/bin"
-		command "./catalina.sh run > #{node['tomcat7']['logDir']}/tomcat.log 2>&1"
+		command "./catalina.sh run > #{node['tomcat7']['logDir']}/tomcat.log 2>&1 &"
 		action :run
 	end
 
