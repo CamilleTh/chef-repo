@@ -6,6 +6,13 @@
 #
 # All rights reserved - Do Not Redistribute
 #
+# http://archive.apache.org/dist/tomcat/tomcat-7/v[VERSION]/bin/apache-tomcat-[VERSION].zip
+
+
+case node["platform"]
+when "debian", "ubuntu"  
+	
+
 
 	directory "#{node['logstash']['dir']}" do
 		  owner "root"
@@ -14,18 +21,28 @@
 		  action:create
 	end
 
-	remote_file "#{node['logstash']['dir']}/logstash-1.1.13-flatjar.jar" do
-			mode "0755"
-			owner "root"
-		  	group "root"
-			source "http://localhost:8081/nexus/content/repositories/thirdparty/utils/logstash/1.1.13/logstash-1.1.13-flatjar.jar"
-			action:create_if_missing	
+	remote_file "#{node['logstash']['dir']}/logstash.jar" do
+		mode "0755"
+		owner "root"
+	  	group "root"
+		source "http://192.168.4.131:8081/nexus/content/repositories/thirdparty/utils/logstash/1.1.13/logstash-1.1.13-flatjar.jar"
+		action:create_if_missing	
 	end
 
-	template "tomcat-users" do 
-			mode "0755"
-			source "tomcat-users.conf.erb"
-			path "#{node['logstash']['dir']}/logstash_agent.conf"
+	template "logstash_agent.conf" do 
+		mode "0755"
+		source "logstash_agent.conf.erb"
+		path "#{node['logstash']['dir']}/logstash_agent.conf"
 	end
 
+	service "logstash" do
+		provider Chef::Provider::Service::Upstart
+		action [:stop ]
+	end 
 
+	service "logstash" do
+		provider Chef::Provider::Service::Upstart
+		action [:start ]
+	end
+
+end

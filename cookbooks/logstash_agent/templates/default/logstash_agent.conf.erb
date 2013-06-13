@@ -1,11 +1,13 @@
 input {
 	file {
-		type			=> "crl_access_logs"
-		path			=> [ "/home/app/apache-tomcat-6.0.36/logs/*access_log.*.txt" ]
+		type			=> "access_logs"
+		add_field 		=> [ "logstash_source", "<%= Chef::Config[:node_name] %>_access_logs" ]
+		path			=> [ "<%= node['tomcat7']['installDir'] %>/apache-tomcat-<%= node['tomcat7']['version'] %>/logs/*access_log.*.txt" ]
 	}
 	file {
-		type			=> "crl_catalina_tech_logs"
-		path			=> [ "%= {node['tomcat7']['logDir']}/tomcat.log %>" ]
+		type			=> "catalina_tech_logs"
+		add_field 		=> [ "logstash_source", "<%= Chef::Config[:node_name] %>_catalina_tech_logs" ]
+		path			=> [ "<%= node['tomcat7']['installDir'] %>/apache-tomcat-<%= node['tomcat7']['version'] %>/logs/*catalina.*.log" ]
 	}
 }
 output {
@@ -14,8 +16,8 @@ output {
 		debug_format		=> "json"
 	}
 	redis {
-		host			=> "176.65.73.155"
+		host			=> "<%= node['collector']['ip'] %>"
 		data_type		=> "list"
-		key			=> "intech_crl_logstash_key"
+		key			=> "intech_devaas_logstash_key"
 	}
 }

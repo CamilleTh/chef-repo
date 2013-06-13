@@ -6,7 +6,7 @@
 #
 # All rights reserved - Do Not Redistribute
 #
-# http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.39/bin/apache-tomcat-[VERSION].zip
+# http://archive.apache.org/dist/tomcat/tomcat-7/v[VERSION]/bin/apache-tomcat-[VERSION].zip
 
 
 case node["platform"]
@@ -52,6 +52,12 @@ when "debian", "ubuntu"
 		path "#{node['tomcat7']['installDir']}/apache-tomcat-#{node['tomcat7']['version']}/conf/tomcat-users.xml"
 	end
 
+	template "server.xml" do 
+		mode "0755"
+		source "server.conf.erb"
+		path "#{node['tomcat7']['installDir']}/apache-tomcat-#{node['tomcat7']['version']}/conf/server.xml"
+	end
+
 	execute "tomcat stop" do
 		user "root"
 		group "root"
@@ -64,7 +70,7 @@ when "debian", "ubuntu"
 		user "root"
 		group "root"
 		cwd "#{node['tomcat7']['installDir']}/apache-tomcat-#{node['tomcat7']['version']}/bin"
-		command "./catalina.sh run > #{node['tomcat7']['logDir']}/tomcat.log 2>&1 &"
+		command "sudo ./catalina.sh run &"
 		action :run
 	end
 

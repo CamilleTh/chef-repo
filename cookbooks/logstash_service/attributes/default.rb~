@@ -1,0 +1,7 @@
+default['tomcat7']['version'] = "7.0.39"
+default['tomcat7']['installDir'] = "/usr/share/tomcat7"
+default['collector']['ip'] = "192.168.11.42"
+default['tomcat7']['logDir']   = "/var/log/tomcat7"
+default['logstash']['dir'] = "/usr/share/logstash"
+default['logstash']['url'] = "http://192.168.4.131:8081/nexus/content/repositories/thirdparty/utils/logstash/1.1.13/logstash-1.1.13-flatjar.jar"
+default['service']['dir'] = "/etc/init/"

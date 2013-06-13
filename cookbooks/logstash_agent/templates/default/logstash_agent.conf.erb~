@@ -1,0 +1,23 @@
+input {
+	file {
+		type			=> "access_logs"
+		add_field 		=> [ "logstash_source", "<%= node.name %>_access_logs" ]
+		path			=> [ "<%= node['tomcat7']['installDir'] %>/apache-tomcat-<%= node['tomcat7']['version'] %>/logs/*access_log.*.txt" ]
+	}
+	file {
+		type			=> "catalina_tech_logs"
+		add_field 		=> [ "logstash_source", "<%= Chef::Config[:node_name] %>_catalina_tech_logs" ]
+		path			=> [ "<%= node['tomcat7']['installDir'] %>/apache-tomcat-<%= node['tomcat7']['version'] %>/logs/*catalina.*.log" ]
+	}
+}
+output {
+	stdout {
+		debug			=> true
+		debug_format		=> "json"
+	}
+	redis {
+		host			=> "<%= node['collector']['ip'] %>"
+		data_type		=> "list"
+		key			=> "intech_devaas_logstash_key"
+	}
+}
