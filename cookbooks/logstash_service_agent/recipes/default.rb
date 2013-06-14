@@ -17,4 +17,12 @@ when "debian", "ubuntu"
 		  mode 0755
 		  action:create
 	end	
+
+	template "logstash.conf" do 
+		mode "0755"
+		owner "root"
+		group "root"
+		source "logstash.conf.erb"
+		path "#{node['service']['dir']}/logstash.conf"
+	end
 end

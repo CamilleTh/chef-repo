@@ -1,0 +1,37 @@
+input {
+
+	<% @patterns.each do |pattern| %>
+	redis {
+		host                    => "127.0.0.1"
+                type                    => "<%=pattern[:id]%>"
+                message_format  => "json_event"
+                data_type               => "list"
+                key                     => "intech_devaas_logstash_key" 
+	}	
+	<% end %>
+
+}
+filter {
+
+	<% @patterns.each do |pattern| %>
+	grok {
+                type                    => "<%=pattern[:id]%>"
+        	pattern                 => "<%=pattern[:pattern]%>"
+        	add_tag                 => ["grok_matched"]
+        }	
+	<% end %>
+	
+        
+	
+}
+output {
+        stdout {
+                debug                   => true
+                debug_format    => "json"
+        }
+        elasticsearch {
+                host                    => "127.0.0.1"
+                cluster                 => "devaas_logmonitor"
+        }
+}
+

@@ -1,0 +1,7 @@
+{
+    "id" : "logstash",
+      "types" : { "access_logs" : "%{IPORHOST:clientip} %{USER:ident} %{USER:auth} \\[%{HTTPDATE:timestamp}\\] \"(?:%{WORD:verb} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion})?|-)\" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent}", 
+		  "catalina_tech_logs" : "%{DATA}",
+		  "default" : "%{DATA}"
+		}
+}

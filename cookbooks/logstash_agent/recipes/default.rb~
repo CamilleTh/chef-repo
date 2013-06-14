@@ -17,7 +17,7 @@ when "debian", "ubuntu"
 	directory "#{node['logstash']['dir']}" do
 		  owner "root"
 		  group "root"
-		  mode 0755
+		  mode 0755 
 		  action:create
 	end
 
@@ -35,14 +35,20 @@ when "debian", "ubuntu"
 		path "#{node['logstash']['dir']}/logstash_agent.conf"
 	end
 
+	
+
 	service "logstash" do
+		owner "root"
+	  	group "root"
 		provider Chef::Provider::Service::Upstart
-		action [:stop ]
+		action :stop 
 	end 
 
 	service "logstash" do
+		owner "root"
+	  	group "root"
 		provider Chef::Provider::Service::Upstart
-		action [:start ]
+		action :start 
 	end
 
 end

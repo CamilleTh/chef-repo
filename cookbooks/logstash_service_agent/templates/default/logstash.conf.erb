@@ -2,7 +2,7 @@
 
 chdir /usr/share/logstash
 
-exec /usr/bin/java -jar logstash-1.1.13-flatjar.jar agent -f logstash_agent.conf -l logstash.log
+exec /usr/bin/java -jar logstash.jar agent -f logstash_agent.conf -l logstash.log
 
 start on runlevel [2345]
 stop on runlevel [^2345]

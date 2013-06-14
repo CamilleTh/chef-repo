@@ -1,23 +1,19 @@
 #
-# Cookbook Name:: logstash_agent
+# Cookbook Name:: logstash_monitor
 # Recipe:: default
 #
-# Copyright 2013, Intech SA
+# Copyright 2013, YOUR_COMPANY_NAME
 #
 # All rights reserved - Do Not Redistribute
 #
-# http://archive.apache.org/dist/tomcat/tomcat-7/v[VERSION]/bin/apache-tomcat-[VERSION].zip
-
 
 case node["platform"]
 when "debian", "ubuntu"  
 	
-
-
 	directory "#{node['logstash']['dir']}" do
 		  owner "root"
 		  group "root"
-		  mode 0755 
+		  mode 0755
 		  action:create
 	end
 
@@ -29,10 +25,23 @@ when "debian", "ubuntu"
 		action:create_if_missing	
 	end
 
-	template "logstash_agent.conf" do 
+	logTypes = data_bag("logstash-types")
+	patterns = Array.new
+	
+	logTypes.each do |type|
+		value = data_bag_item("logstash-types",type)
+		patterns.push {
+			:id => value['id'],
+			:pattern => value['pattern']
+		}
+	end
+
+	
+	template "logstash_monitor.conf" do 
 		mode "0755"
-		source "logstash_agent.conf.erb"
-		path "#{node['logstash']['dir']}/logstash_agent.conf"
+		source "logstash_monitor.conf.erb"
+		path "#{node['logstash']['dir']}/logstash_monitor.conf"
+		variables(:patterns => patterns) 
 	end
 
 	service "logstash" do
