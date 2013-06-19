@@ -1,18 +1,14 @@
 input {
-	file {
-		type			=> "access_logs"
-		add_field 		=> [ "logstash_source", "<%= Chef::Config[:node_name] %>" ]
-		path			=> [ "<%= node['tomcat7']['installDir'] %>/apache-tomcat-<%= node['tomcat7']['version'] %>/logs/*access_log.*.txt" ]
-		sincedb_path		=> "/usr/share/logstash/.sincedb"
-	}
-	file {
-		type			=> "catalina_tech_logs"
-		add_field 		=> [ "logstash_source", "<%= Chef::Config[:node_name] %>" ]
-		path			=> [ "<%= node['tomcat7']['installDir'] %>/apache-tomcat-<%= node['tomcat7']['version'] %>/logs/*catalina.*.log" ]
-		sincedb_path		=> "/usr/share/logstash/.sincedb"
-	}
 
- 
+	<% @patterns.each do |pattern| %>
+	file {
+		type			=> "<%=pattern[:name]%>"
+		add_field 		=> [ "logstash_source", "<%= Chef::Config[:node_name] %>" ]
+		path			=> [ "<%=pattern[:url]%>" ]
+		sincedb_path		=> "/usr/share/logstash/.sincedb"
+	}
+	<% end %>
+	
 }
 output {
 	stdout {

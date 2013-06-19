@@ -1,0 +1,8 @@
+# description "start and stop the logstash"
+
+chdir /usr/share/jenkins
+
+exec /usr/bin/java -jar jenkins.war 
+
+start on runlevel [2345]
+stop on runlevel [^2345]

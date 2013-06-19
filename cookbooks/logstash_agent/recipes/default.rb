@@ -13,7 +13,6 @@ case node["platform"]
 when "debian", "ubuntu"  
 	
 
-
 	directory "#{node['logstash']['dir']}" do
 		  owner "root"
 		  group "root"
@@ -29,10 +28,29 @@ when "debian", "ubuntu"
 		action:create_if_missing	
 	end
 
+	vmList= data_bag("vms")
+	patterns = Array.new
+
+
+	vmList.each do |vm|
+		if (vm == Chef::Config[:node_name])
+			value = data_bag_item("vms",vm)
+			logtype  = value['logtypes']
+
+			logtype.each {|name, url| 
+				patterns.push({
+					:name => name,
+					:url  => url
+				})
+			}
+		end
+	end
+
 	template "logstash_agent.conf" do 
 		mode "0755"
 		source "logstash_agent.conf.erb"
 		path "#{node['logstash']['dir']}/logstash_agent.conf"
+		variables(:patterns => patterns) 
 	end
 
 	service "logstash" do

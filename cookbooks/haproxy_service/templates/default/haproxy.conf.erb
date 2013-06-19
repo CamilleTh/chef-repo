@@ -1,0 +1,8 @@
+# description "start and stop the logstash"
+
+chdir /usr/share/haproxy
+
+exec /usr/share/haproxy/haproxy -D -f  /usr/share/haproxy/haproxy.cfg 
+
+start on runlevel [2345]
+stop on runlevel [^2345]

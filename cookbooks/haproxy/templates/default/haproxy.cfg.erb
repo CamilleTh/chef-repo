@@ -1,0 +1,26 @@
+global
+    maxconn 4096
+    daemon
+ 
+defaults
+    mode    http
+    timeout    connect    5000ms
+    timeout    client    50000ms
+    timeout    server    50000ms
+ 
+frontend http-in
+    bind *:80
+    default_backend neo4j
+ 
+backend neo4j
+    balance rdp-cookie ab_testing_cookie
+
+
+    <% @ipList.each do |vm| %>
+    server <%=vm[:name]%> <%=vm[:ip]%>:<%=vm[:port]%> maxconn 2048 check
+    <% end %>
+
+ 
+listen admin
+    bind *:8080
+    stats enable
