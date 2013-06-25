@@ -10,6 +10,7 @@
 case node["platform"]
 when "debian", "ubuntu"  
 	
+
 	package "tar"
 
 	directory "#{node['haproxy']['dir']}" do
@@ -55,6 +56,7 @@ when "debian", "ubuntu"
 		 cwd "#{node['haproxy']['dir']}"
 		 command "rm -rf haproxy-1.4.24"
 		 action :nothing
+		 notifies :run, "execute[make TARGET]", :immediately
 	end
 
 	execute 'make TARGET' do
@@ -62,52 +64,111 @@ when "debian", "ubuntu"
 		 group "root"
 		 cwd "#{node['haproxy']['dir']}"
 		 command "make TARGET=linux26 "
-		 action :run
+		 action :nothing
+		 notifies :run, "execute[make install]", :immediately
 	end	 
 
-	execute 'make TARGET' do
+	execute 'make install' do
 		 user "root"
 		 group "root"
 		 cwd "#{node['haproxy']['dir']}"
 		 command "make install"
-		 action :run
+		 action :nothing
 	end	 
 
-	vmList= data_bag("vms")
-	ipList = Array.new
+
+ 	# it's what we need to feed
+	frontend = Array.new
+	backend = Array.new
+	
+	# APP PART
+	appList = data_bag("apps")
+	appList.each do |app|
+
+		# app = "app-test"
+
+		appli = data_bag_item("apps",app)
+
+		envs = appli['envs']
+		# envs = "[env-test,..."
+
+		envs.each do |envi|
+
+			# ENV PART
+			envList = data_bag("envs")
+
+			envList.each do |env|
+
+				if env == envi 
+
+					infoenv = data_bag_item("envs",envi)
+					aliasname = infoenv['alias']
+
+					frontend.push({
+						:app  => app,
+						:env  => env,
+						:aliasname  => aliasname
+					})
+
+					# VM PART
+					vms = infoenv['vms']
+					# envs = "[env-test,..."
+
+					vms.each do |vm2|
+
+						
+						vmList = data_bag("vms")
+
+						vmList.each do |vm|
+
+							if vm == vm2
+
+								infoVM  = data_bag_item("vms",vm)
+								ip  = infoVM['ip']
+								port  = infoVM['port']
+								name  = infoVM['id']
 
 
-	vmList.each do |vm|
-
-		infoVM  = data_bag_item("vms",vm)
-		ip  = infoVM['ip']
-		port  = infoVM['port']
-		name  = infoVM['id']
-
-		log '#'
-		log name
-
-		ipList.push({
-					:name => name,
-					:ip  => ip,
-					:port => port
-		})
-
-	end
+								backend.push({
+											:app  => app,
+											:env  => env,
+											:name => name,
+											:ip  => ip,
+											:port => port
+								})
+							end
+						end	
+					end
+				end
+			end	
+		end		
+	end 	
+	log frontend
+	log backend
 
 	template "haproxy.cfg" do 
 		mode "0755"
 		source "haproxy.cfg.erb"
 		path "#{node['haproxy']['dir']}/haproxy.cfg"
-		variables(:ipList => ipList) 
+		variables(:frontend => frontend, :backend => backend)
+
+		notifies :run, "bash[stop haproxy]", :immediately
 	end
+
+	bash "stop haproxy" do
+  		user "root"
+  		cwd "#{node['haproxy']['dir']}"
+  		code <<-EOH
+  		pid=`pgrep haproxy`
+  		kill -9 $pid
+ 		EOH
+		action :nothing
+	end	 
 
 	execute 'launch haproxy' do
 		 user "root"
 		 group "root"
 		 cwd "#{node['haproxy']['dir']}"
-		 command " /usr/share/haproxy/haproxy -D -f  /usr/share/haproxy/haproxy.cfg"
-		 action :run
-	end	 
-
+		 command "sudo start haproxy"
+	end	
 end
