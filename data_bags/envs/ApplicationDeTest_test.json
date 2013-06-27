@@ -1,0 +1,9 @@
+{
+"id": "ApplicationDeTest_test",
+    "alias": "prod",
+    "vms": [
+      "DeployVM"
+    ]
+}
+
+

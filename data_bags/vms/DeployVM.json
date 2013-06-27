@@ -1,0 +1,14 @@
+{
+    "id": "DeployVM",
+    "logtypes": {
+      "access_logs": "/usr/share/tomcat7/apache-tomcat-7.0.39/logs/*access_log.*.txt",
+      "catalina_tech_logs": "/usr/share/tomcat7/apache-tomcat-7.0.39/logs/*catalina.*.log"
+    },
+    "ip": "192.168.4.147",
+    "port": "8080",
+    "entrypoint": "1",
+    "deployList": [
+      { "artefactid" : "DeployApp", "groupid" : "lu.intech", "version" : "1.0", "env" : "test"},
+      { "artefactid" : "DeployApp2", "groupid" : "lu.intech", "version" : "1.1", "env" : "prod"}
+    ]
+}

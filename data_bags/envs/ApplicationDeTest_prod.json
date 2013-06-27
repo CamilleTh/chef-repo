@@ -1,0 +1,15 @@
+{
+"id": "ApplicationDeTest_prod",
+    "alias": "prod",
+    "vms": [
+      "DeployVM-bis",
+      "DeployVM"
+    ]
+}
+
+
+
+
+
+
+

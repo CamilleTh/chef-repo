@@ -1,0 +1,10 @@
+{
+   "id": "ApplicationDeTest",
+    "envs": [
+      "ApplicationDeTest_test",
+      "ApplicationDeTest_prod"
+   ] 
+}
+
+
+

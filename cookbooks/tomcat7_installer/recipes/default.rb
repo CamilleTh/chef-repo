@@ -70,7 +70,7 @@ when "debian", "ubuntu"
 		user "root"
 		group "root"
 		cwd "#{node['tomcat7']['installDir']}/apache-tomcat-#{node['tomcat7']['version']}/bin"
-		command "sudo ./catalina.sh run &"
+		command "./catalina.sh run &"
 		action :run
 	end
 
