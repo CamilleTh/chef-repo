@@ -12,6 +12,7 @@
 case node["platform"]
 when "debian", "ubuntu"  
 	
+	require 'json'
 
 	directory "#{node['logstash']['dir']}" do
 		  owner "root"
@@ -24,26 +25,30 @@ when "debian", "ubuntu"
 		mode "0755"
 		owner "root"
 	  	group "root"
-		source "http://192.168.4.131:8081/nexus/content/repositories/thirdparty/utils/logstash/1.1.13/logstash-1.1.13-flatjar.jar"
+		source "http://192.168.1.60:8081/nexus/content/repositories/thirdparty/utils/logstash/1.1.13/logstash-1.1.13-flatjar.jar"
 		action:create_if_missing	
 	end
 
-	vmList= data_bag("vms")
 	patterns = Array.new
 
+	node['logtypes'].each do |type|
+		
+		t = String(type)
+		t.tr! '"', ""
+		t.tr! '[', ""
+		t.tr! ']', ""
 
-	vmList.each do |vm|
-		if (vm == Chef::Config[:node_name])
-			value = data_bag_item("vms",vm)
-			logtype  = value['logtypes']
-
-			logtype.each {|name, url| 
-				patterns.push({
-					:name => name,
-					:url  => url
-				})
-			}
-		end
+		log t
+		pat = Array.new
+		pat = t.split(',');
+		pat[1] = pat[1].tr! ' ',""
+		
+		log pat
+		patterns.push({
+				:name => pat[0],
+				:url  => pat[1]
+		})
+		
 	end
 
 	template "logstash_agent.conf" do 

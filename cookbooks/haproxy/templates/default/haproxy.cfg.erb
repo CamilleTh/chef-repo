@@ -18,23 +18,23 @@ frontend HAProxy
 
     # ACL Path
     <% @frontend.each do |env| %>
-    acl want_<%=env[:app]%>_<%=env[:aliasname]%> path_dir <%=env[:app]%>/<%=env[:aliasname]%>
+    acl want_<%=env[:app]%>_<%=env[:env]%> path_dir <%=env[:app]%>/<%=env[:env]%>
     <% end %>
 
     # ACL Available
     <% @frontend.each do |env| %>
-    acl <%=env[:app]%>_<%=env[:aliasname]%>_available nbsrv(<%=env[:app]%>_<%=env[:aliasname]%>) ge 1
+    acl <%=env[:app]%>_<%=env[:env]%>_available nbsrv(<%=env[:app]%>_<%=env[:env]%>) ge 1
     <% end %>
 
     # Backend a utiliser
     <% @frontend.each do |env| %>
-    use_backend <%=env[:app]%>_<%=env[:aliasname]%> if want_<%=env[:app]%>_<%=env[:aliasname]%> <%=env[:app]%>_<%=env[:aliasname]%>_available
+    use_backend <%=env[:app]%>_<%=env[:env]%> if want_<%=env[:app]%>_<%=env[:env]%> <%=env[:app]%>_<%=env[:env]%>_available
     <% end %>
 
 ########## BACKENDS ##########
 <% @frontend.each do |env| %>
 
-backend <%=env[:app]%>_<%=env[:aliasname]%>
+backend <%=env[:app]%>_<%=env[:env]%>
     mode http
     option httpclose
     balance roundrobin
@@ -42,9 +42,9 @@ backend <%=env[:app]%>_<%=env[:aliasname]%>
     option nolinger
 
     # Modifications des URL
-    reqrep ^([^\ ]*)\ /<%=env[:app]%>/<%=env[:aliasname]%>/([^\ ]*)\ (.*)$       \1\ /\2\ \3
-    rsprep ^(Location:)\ http://([^/]*)/(.*)$    \1\ http://\2/<%=env[:app]%>/<%=env[:aliasname]%>/\3
-    rsprep ^(Set-Cookie:.*\ path=)([^\ ]+)(.*)$       \1/<%=env[:app]%>/<%=env[:aliasname]%>\2\3
+    reqrep ^([^\ ]*)\ /<%=env[:app]%>/<%=env[:env]%>/([^\ ]*)\ (.*)$       \1\ /\2\ \3
+    rsprep ^(Location:)\ http://([^/]*)/(.*)$    \1\ http://\2/<%=env[:app]%>/<%=env[:env]%>/\3
+    rsprep ^(Set-Cookie:.*\ path=)([^\ ]+)(.*)$       \1/<%=env[:app]%>/<%=env[:env]%>\2\3
 
     # Load Balancing
     <%  @backend.each do |envi| 

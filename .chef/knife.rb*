@@ -1,6 +1,6 @@
 log_level                :info
 log_location             STDOUT
-node_name                'workstation'
+node_name                'camille'
 client_key               '/home/camille/chef-repo/.chef/workstation.pem'
 validation_client_name   'camille'
 validation_key           '/home/camille/chef-repo/.chef/workstation.pem'
