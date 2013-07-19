@@ -98,8 +98,7 @@ when "debian", "ubuntu"
 				
 				if bool == 0 
 
-					log "env"
-					log part
+					
 					bool = 1 
 					envActu = part
 
@@ -120,11 +119,7 @@ when "debian", "ubuntu"
 						ip = ip.split("=>")
 						
 						ip = ip[1]
-						log "name"
-						log name
-
-						log "ip"
-						log ip
+				
 
 						backend.push({
 							:app  => app,
@@ -141,8 +136,7 @@ when "debian", "ubuntu"
 
 	end	
 
-	log frontend
-	log backend
+
 
 	template "haproxy.cfg" do 
 		mode "0755"

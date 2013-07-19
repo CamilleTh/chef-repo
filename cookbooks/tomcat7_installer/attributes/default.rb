@@ -3,3 +3,5 @@ default['tomcat7']['installDir'] = "/usr/share/tomcat7"
 default['tomcat7']['username'] = "admin"
 default['tomcat7']['password'] = "admin"
 default['tomcat7']['logDir']   = "/var/log/tomcat7"
+default['nexus']['url'] = "192.168.11.27:8081"
+

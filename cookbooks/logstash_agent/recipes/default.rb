@@ -38,12 +38,10 @@ when "debian", "ubuntu"
 		t.tr! '[', ""
 		t.tr! ']', ""
 
-		log t
 		pat = Array.new
 		pat = t.split(',');
 		pat[1] = pat[1].tr! ' ',""
 		
-		log pat
 		patterns.push({
 				:name => pat[0],
 				:url  => pat[1]

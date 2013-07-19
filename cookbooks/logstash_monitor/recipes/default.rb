@@ -19,7 +19,6 @@ when "debian", "ubuntu"
 
 	Chef::Log.info("LOGGGG")
 
-	log "test"
 
 	remote_file "#{node['logstash']['dir']}/logstash.jar" do
 		mode "0755"
