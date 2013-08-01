@@ -29,6 +29,30 @@ when "debian", "ubuntu"
 		action:create_if_missing	
 	end
 
+	listApp = ""
+	env = ""
+	first = 0
+
+	node['DeployList'].each do |app| 
+		app.each do |element|
+			if( element[0] == "artefactid" ) 
+				if (first == 0)
+				listApp = element[1]
+				first = 1
+				else
+				listApp = listApp + " " + element[1]
+				end
+
+			end
+			if( element[0] == "env" ) 
+				env = element[1]
+			end
+		end
+	end	
+
+	log listApp
+	log env
+
 	patterns = Array.new
 
 	node['logtypes'].each do |type|
@@ -44,7 +68,9 @@ when "debian", "ubuntu"
 		
 		patterns.push({
 				:name => pat[0],
-				:url  => pat[1]
+				:url  => pat[1],
+				:application => listApp,
+				:environment => env
 		})
 		
 	end

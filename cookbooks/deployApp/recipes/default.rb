@@ -10,6 +10,7 @@
 # recuperation des données 
 Apps = Array.new
 updated = 0
+
 node['DeployList'].each do |app|
 
 
