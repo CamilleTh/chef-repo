@@ -25,13 +25,17 @@ when "debian", "ubuntu"
 		mode "0755"
 		owner "root"
 	  	group "root"
-		source "http://192.168.1.60:8081/nexus/content/repositories/thirdparty/utils/logstash/1.1.13/logstash-1.1.13-flatjar.jar"
+		source "#{node['nexus']['url']}/nexus/content/repositories/thirdparty/utils/logstash/1.1.13/logstash-1.1.13.jar"
 		action:create_if_missing	
 	end
 
 	listApp = ""
 	env = ""
 	first = 0
+
+	if !node.attribute?('DeployList')
+		node.normal["DeployList"]
+	end 
 
 	node['DeployList'].each do |app| 
 		app.each do |element|
@@ -54,6 +58,11 @@ when "debian", "ubuntu"
 	log env
 
 	patterns = Array.new
+
+	if !node.attribute?('logtypes')
+		node.normal["logtypes"]
+	end 
+
 
 	node['logtypes'].each do |type|
 		

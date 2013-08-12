@@ -13,7 +13,7 @@
 masterAccessLevel 	= node['gitlab']['masterAccessLevel']
 developerAccessLevel 	= node['gitlab']['developerAccessLevel']
 
-gitlabRestBaseURL = "http://#{node['gitlab']['host']}:#{node['gitlab']['port']}/api/v2"
+gitlabRestBaseURL = "http://#{node['gitlab']['host']}:#{node['gitlab']['port']}/api/v3"
 gitlabToken = node['gitlab']['token']
 gitlabUser = node['gitlab']['user']
 
@@ -33,7 +33,7 @@ end
 git "#{devaasDir}/sample_j2ee" do
   repository node["git"]["sampleappRepo"]
   action :sync
-  user "gitlab"
+  user "root"
 end
 
 require 'rest_client'
@@ -57,7 +57,7 @@ applications.each do|app|
 	ruby_block "Create repository #{appli.id}" do
 		currentRepos = JSON.parse( RestClient.get "#{gitlabRestBaseURL}/projects?private_token=#{gitlabToken}" )
 		currentUsers = JSON.parse( RestClient.get "#{gitlabRestBaseURL}/users?private_token=#{gitlabToken}" )
-
+			
 		block do
 			alreadyExists=false
 			unless currentRepos.nil?
@@ -78,14 +78,16 @@ applications.each do|app|
 					appli['users'].each do|master|
 						
 						
-						masterUser = currentUsers.find{|r| r['name'] == master['username']}
+						masterUser = currentUsers.find{|r| r['username'] == master['username']}
 						if masterUser != nil
+
 							Chef::Log.info "Add user #{masterUser['name']} as master to repo #{appli['id']}"
 							RestClient.post "#{gitlabRestBaseURL}/projects/#{newRepoId}/members?private_token=#{gitlabToken}",
 							{ 'id'=> newRepoId,
 							 	'user_id'=> masterUser['id'], 
 							 	'access_level'=> masterAccessLevel
-							}.to_json
+							}.to_json,
+							:content_type => :json
 						else
 							Chef::Log.info "Cannot find user #{master} in Gitlab"
 						end
@@ -94,14 +96,11 @@ applications.each do|app|
 					Chef::Log.error "An error occured : response is #{res.code} with message #{res.to_str}"
 				end
 				if !alreadyExists
-					Chef::Log.info "!exists"
 					sleep 5
 					resources(:script => "Init repository #{appli.id} #{groupid}").run_action(:run)
 					appname = appli.id.downcase
 					Chef::Log.info "git@192.168.11.27:#{gitlabUser}/#{appname}.git"
-					node.normal['repositories'][appli.id] = "git@192.168.11.27:#{gitlabUser}/#{appname}.git"
-				else
-					Chef::Log.info "exists"
+					node.normal['repositories'][appli.id] = "git@10.241.97.11:#{gitlabUser}/#{appname}.git"
 				end
 			end
 		end
@@ -110,7 +109,7 @@ applications.each do|app|
 
 	script "Init repository #{appli.id} #{groupid}" do
 	  interpreter "bash"
-	  user "gitlab"
+	  user "root"
 	  cwd "#{devaasDir}/temp"
 	  code <<-EOH
 	  	mkdir repo_#{appli.id}

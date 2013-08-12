@@ -76,6 +76,12 @@ when "debian", "ubuntu"
 
 	appCount = 0
 
+
+	
+	if !node.attribute?('DeployList')
+		node.normal["DeployList"]
+	end 
+
 	node['DeployList'].each do |app|
 
 		appInfo = String(app).split(',')
@@ -110,8 +116,6 @@ when "debian", "ubuntu"
 			cmd2 = "curl -u admin:admin http://#{node['ipaddress']}:8080/manager/text/undeploy?path=/#{app[1]}"
 			cmd3 = "curl -T - -u admin:admin 'http://#{node['ipaddress']}:8080/manager/text/deploy?update=true&path=/#{app[1]}' < download.war"
 			cmd4 = "rm download.war"
-
-			
 			
 			`#{cmd1}`
 			`#{cmd2}`
@@ -145,6 +149,7 @@ when "debian", "ubuntu"
 		command "./catalina.sh run &"
 		action :nothing
 	end
+	
 
 
 end

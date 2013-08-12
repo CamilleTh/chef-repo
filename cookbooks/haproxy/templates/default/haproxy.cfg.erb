@@ -48,7 +48,7 @@ backend <%=env[:app]%>_<%=env[:env]%>
 
     # Load Balancing
     <%  @backend.each do |envi| 
-            if env[:env] == envi[:env]
+            if env[:env] == envi[:env] && env[:app] == envi[:app]
     %>
     server <%=envi[:name]%> <%=envi[:ip]%>:<%=envi[:port]%> cookie <%=envi[:name]%> maxconn 1024 check inter 2s rise 2 fall 2
     <% 

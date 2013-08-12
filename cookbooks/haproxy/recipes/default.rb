@@ -30,56 +30,56 @@ when "debian", "ubuntu"
 	frontend = Array.new
 	backend = Array.new
 	
-	envActu = ""
-
 	appList = data_bag("apps")
+
+	# for each app
 	appList.each do |app|
 	
 		appli = data_bag_item("apps",app)
-		envs = appli['envs']
-		
+		envs = appli['envs']		
+
+		# application name
+		appName = appli['id']
+
+		# port number
 		port = appli['port']
 
-		envs.each do |envi|
-			
-			bool = 0
-			envi.each do |part|
-				
-				if bool == 0 
-					bool = 1 
-					envActu = part
+		envs.each do |env|		
+			env.each do |element|
+				if element[0] == "name"
+					#for each env
+
+					# environnment name  
+					envName = element[1]
+
 
 					frontend.push({
-						:app  => app,
-						:env  => part
+						:app  => appName,
+						:env  => envName
 					})
-				else
-					part.each  do |vm|
-		
 
-						name = vm[0]
-						ip   = vm[1]
-						ip = ip.to_s
-						ip.tr! '{', ""
-						ip.tr! '}', ""
-						ip.tr! '"', ""
-						ip = ip.split("=>")
-						ip = ip[1]
-
+					nodes = search('node', "DeployList_artefactid:"+appli['id']+" AND DeployList_env:"+envName)
+					nodes.each do |node|
+						ip = node["ipaddress"]
+						vmname = node["fqdn"]
+						log ip
+						log vmname
 
 						backend.push({
-							:app  => app,
-							:env  => envActu,
-							:name => name,
+							:app  => appName,
+							:env  => envName,
+							:name => vmname,
 							:ip  => ip,
 							:port => port
 						})
 					end
 				end
+			end
+		end
+		log frontend
+		log backend
 
-			end	
-		end	
-	end	
+	end
 
 	template "haproxy.cfg" do 
 		mode "0755"

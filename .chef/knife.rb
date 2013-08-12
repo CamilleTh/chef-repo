@@ -1,9 +1,9 @@
-log_level                :info
+log_level                :debug
 log_location             STDOUT
-node_name                'workstation'
-client_key               '/home/camille/chef-repo/.chef/workstation.pem'
-validation_client_name   'camille'
-validation_key           '/home/camille/chef-repo/.chef/workstation.pem'
-chef_server_url          'https://192.168.11.27'
-syntax_check_cache_path  '/home/camille/chef-repo/.chef/syntax_check_cache'
-cookbook_path [ '/home/camille/chef-repo/cookbooks' ]
+node_name                'camille'
+client_key               '/Users/camille/chef-repo/.chef/camille.pem'
+validation_client_name   'chef-validator'
+validation_key           '/Users/camille/chef-repo/.chef/chef-validator.pem'
+chef_server_url          'https://10.241.97.11'
+syntax_check_cache_path  '/Users/camille/chef-repo/.chef/syntax_check_cache'
+cookbook_path [ '/Users/camille/chef-repo/cookbooks' ]

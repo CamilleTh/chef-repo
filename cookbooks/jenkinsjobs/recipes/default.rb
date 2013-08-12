@@ -26,6 +26,13 @@ when "debian", "ubuntu"
 	  action :create
 	end
 
+	cookbook_file "#{node['jenkins']['dir']}/post_build.rb" do
+	  source "post_build.rb"
+	  mode 0755
+	  owner "root"
+	  group "root"
+	end
+
 	remote_file "#{node['jenkins']['dir']}/jenkins-cli.jar" do
 		mode "0755"
 		owner "root"
@@ -58,7 +65,6 @@ when "debian", "ubuntu"
 				branch = "master"
 			end
 
-			Chef::Log.info envname
 			directory node['jenkins']['dir']+"/#{appname}#{envname}" do
 			  owner 'root'
 			  group 'root'
@@ -76,8 +82,6 @@ when "debian", "ubuntu"
 			end
 
 			ruby_block "editjob #{appname} #{envname}" do
-				Chef::Log.info "appname"+appname
-				Chef::Log.info "envname"+envname
 				block do
 			 	  	jobexists = `java -jar  #{node['jenkins']['dir']}/jenkins-cli.jar -s #{node['jenkins']['server-url']} list-jobs | grep #{appname}#{envname}`
 			 	  	Chef::Log.info "jobexist"+jobexists
